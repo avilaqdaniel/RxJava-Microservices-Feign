@@ -6,11 +6,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.everis.apiatmdeposits.model.entity.CardResponse;
 
-import io.reactivex.Single;
-
 @FeignClient(name = "api-cards", url = "localhost:8004")
 public interface CardsClientFeign {
 
 	@GetMapping("core/cards")
-	public Single<CardResponse> getCardsByDocumentNumber(@RequestParam String documentNumber);
+	public CardResponse getCardsByDocumentNumber(@RequestParam String documentNumber);
 }

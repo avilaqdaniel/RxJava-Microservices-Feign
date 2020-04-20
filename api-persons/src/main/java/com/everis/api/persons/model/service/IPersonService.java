@@ -9,5 +9,6 @@ import io.reactivex.Single;
 public interface IPersonService {
 
 	public Single<Person> findByDocument(String document);
+	
 	public List<Person> findAll();
 }

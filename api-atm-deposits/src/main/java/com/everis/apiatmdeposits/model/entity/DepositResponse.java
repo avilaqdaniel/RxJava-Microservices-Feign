@@ -2,6 +2,7 @@ package com.everis.apiatmdeposits.model.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

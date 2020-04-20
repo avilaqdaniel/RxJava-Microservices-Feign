@@ -48,9 +48,9 @@ public class DepositServiceImpl implements IDepositService{
 	@Autowired
 	private AccountsClientFeign clientFeignAccounts;
 
-	/*@Override
+	@Override
 	public Single<DepositResponse> depositAmount(DepositIn depositIn) {
-		return clientFeignPerson.getPersonByDocumentNumber(depositIn.getDocumentNumber())
+		return Single.just(clientFeignPerson.getPersonByDocumentNumber(depositIn.getDocumentNumber()))
 				.filter(this::validateIfPersonNotFound)
 				.map(ResponseEntity::getBody)
 				.filter(personResponse -> validateBlacklist(personResponse.isBlacklist()))
@@ -61,7 +61,8 @@ public class DepositServiceImpl implements IDepositService{
 						getAccounts().apply(depositIn.getDocumentNumber()),
 						(entityName, accountResponses) -> parseAtmDepositResponse(entityName, accountResponses, depositIn.getAmount()))
 				.toSingle();
-	}*/
+				
+	}
 	
 	private boolean validateIfPersonNotFound(ResponseEntity<PersonResponse> response) throws PersonNotFoundException{
 		if(response.getStatusCodeValue() == HttpStatus.NOT_FOUND.value()) {
@@ -78,11 +79,11 @@ public class DepositServiceImpl implements IDepositService{
 	private Maybe<ValidationResponse> validateDocumentNumber(PersonResponse person){
 		ValidateIn validateIn = new ValidateIn(person.getDocument());
 		if (person.isFingerprint()) {
-			return clientFeignFingerprint.validateFingerprint(validateIn)
+			return Single.just(clientFeignFingerprint.validateFingerprint(validateIn))
 					.map(response -> parseValidationResponse(response.getEntityName(), response.isSuccess()))
 					.toMaybe();
 		}else {
-			return clientFeignReniec.validateReniec(validateIn)
+			return Single.just(clientFeignReniec.validateReniec(validateIn))
 					.map(response -> parseValidationResponse(response.getEntityName(), response.isSuccess()))
 					.toMaybe();
 		}
@@ -93,16 +94,17 @@ public class DepositServiceImpl implements IDepositService{
 	}
 	
 	private Function<String, Maybe<List<AccountResponse>>> getAccounts(){
-		return documentNumber -> clientFeignCards.getCardsByDocumentNumber(documentNumber)
+		return documentNumber -> Single.just(clientFeignCards.getCardsByDocumentNumber(documentNumber))
 				.doOnSuccess(cardResponse -> log.info("Card --> {}", cardResponse.getCards().size()))
 				.toObservable()
 				.flatMapIterable(CardResponse::getCards)
 				.filter(Card::getActive)
-				.flatMap(card -> clientFeignAccounts.getAccountNumber(card.getCardNumber())
+				.flatMap(card -> Single.just(clientFeignAccounts.getAccountNumber(card.getCardNumber()))
 						.toObservable()
 						.subscribeOn(Schedulers.io()))
 				.toList()
 				.toMaybe();
+				
 	}
 	
 	private DepositResponse parseAtmDepositResponse(String entityName, List<AccountResponse> accountResponses, double amount) {
@@ -127,8 +129,8 @@ public class DepositServiceImpl implements IDepositService{
 	}
 
 	@Override
-	public Single<PersonResponse> getPerson(String document) {
-		return clientFeignPerson.getPersonByDocumentNumber(document);
+	public Single<ResponseEntity<PersonResponse>> getPerson(String document) {
+		return Single.just(clientFeignPerson.getPersonByDocumentNumber(document));
 	}
 
 }

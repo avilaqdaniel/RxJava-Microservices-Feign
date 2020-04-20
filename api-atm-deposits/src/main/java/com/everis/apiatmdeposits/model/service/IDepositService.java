@@ -10,8 +10,8 @@ import io.reactivex.Single;
 
 public interface IDepositService {
 	
-	/*Single<DepositResponse> depositAmount(DepositIn depositIn);*/
+	public Single<DepositResponse> depositAmount(DepositIn depositIn);
 	
-	public Single<PersonResponse> getPerson(String document);
+	public Single<ResponseEntity<PersonResponse>> getPerson(String document);
 	
 }

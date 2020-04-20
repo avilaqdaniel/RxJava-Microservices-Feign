@@ -21,7 +21,7 @@ public class PersonController {
 	@Autowired
 	private IPersonService personService;
 
-	@GetMapping
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public Single<Person> getPersonByDocumentNumber(@RequestParam String documentNumber) {
 		return personService.findByDocument(documentNumber);
 	}

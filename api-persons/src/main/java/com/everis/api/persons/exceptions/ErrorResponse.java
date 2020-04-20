@@ -3,14 +3,17 @@ package com.everis.api.persons.exceptions;
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ErrorResponse implements Serializable{
 
+	
 	/**
 	 * 
 	 */
@@ -19,5 +22,7 @@ public class ErrorResponse implements Serializable{
 	private String message;
 	private int statusCode;
 	private String path;
+	
 
+	
 }

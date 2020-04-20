@@ -12,5 +12,5 @@ import io.reactivex.Single;
 public interface AccountsClientFeign {
 
 	@GetMapping("/core/accounts")
-	public Single<AccountResponse> getAccountNumber(@RequestParam String cardNumber);
+	public AccountResponse getAccountNumber(@RequestParam String cardNumber);
 }
